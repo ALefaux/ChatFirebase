@@ -9,6 +9,7 @@
 import Foundation
 import FirebaseAuth
 import GoogleSignIn
+import FirebaseDatabase
 
 class Helper {
     static let helper = Helper()
@@ -21,6 +22,9 @@ class Helper {
         Auth.auth().signInAnonymously { (anonymousUser, error) in
             if error == nil {
                 print("UserId: \(anonymousUser!.uid)")
+                
+                let newUser = Database.database().reference().child("users").child(anonymousUser!.uid)
+                newUser.setValue(["displayname":"Anonymous","id":"\(anonymousUser!.uid)","profileUrl":""])
                 
                 self.switchToNavigationViewController()
             } else {
@@ -39,6 +43,9 @@ class Helper {
             } else {
                 print(user?.email ?? "User instance is nil")
                 print(user?.displayName ?? "User instance is nil")
+                
+                let newUser = Database.database().reference().child("users").child(user!.uid)
+                newUser.setValue(["displayname":"\(user!.displayName!)","id":"\(user!.uid)","profileUrl":"\(user!.photoURL!)"])
                 
                 self.switchToNavigationViewController()
             }
